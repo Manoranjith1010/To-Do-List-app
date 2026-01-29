@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django SPA To-Do</title>
+    <style>
+        .completed { text-decoration: line-through; color: gray; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h2>My Tasks</h2>
+    
+    <input type="text" id="taskInput" placeholder="Add a new task...">
+    <button onclick="addTask()">Add</button>
+
+    <ul id="taskList">
+        {% for task in tasks %}
+        <li id="task-{{ task.id }}">
+            <input type="checkbox" {% if task.completed %}checked{% endif %} 
+                   onchange="toggleTask('{{ task.id }}')">
+            <span class="{% if task.completed %}completed{% endif %}">{{ task.title }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        // Essential for Django POST requests
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        async function addTask() {
+            const input = document.getElementById('taskInput');
+            const response = await fetch('/add/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify({ title: input.value })
+            });
+            const task = await response.json();
+            
+            // Append new task to the DOM without refreshing
+            const li = `<li id="task-${task.id}">
+                <input type="checkbox" onchange="toggleTask('${task.id}')">
+                <span>${task.title}</span>
+            </li>`;
+            document.getElementById('taskList').insertAdjacentHTML('afterbegin', li);
+            input.value = '';
+        }
+
+        async function toggleTask(id) {
+            const response = await fetch(`/toggle/${id}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+            const span = document.querySelector(`#task-${id} span`);
+            span.classList.toggle('completed', data.completed);
+        }
+    </script>
+</body>
+</html>
