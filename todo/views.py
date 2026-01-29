@@ -8,11 +8,14 @@ def index(request):
     return render(request, 'todo/index.html', {'tasks': tasks})
 
 def add_task(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        task = Task.objects.create(title=data['title'])
-        return JsonResponse({'id': task.id, 'title': task.title, 'completed': task.completed})
+    if request.method == "POST":
+        task_name = request.POST.get("task")
+        if task_name:
+            Task.objects.create(name=task_name)
+        return redirect("/")  # redirect after POST
+    return render(request, "todo/index.html")
 
+    
 def toggle_task(request, task_id):
     if request.method == 'POST':
         task = Task.objects.get(id=task_id)
