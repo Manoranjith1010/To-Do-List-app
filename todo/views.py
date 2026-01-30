@@ -1,24 +1,47 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import Task
-import json
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from .forms import TodoForm
+from .models import Todo
+from django.utils import timezone
+
+
+# Create your views here.
+
 
 def index(request):
-    tasks = Task.objects.all().order_by('-created_at')
-    return render(request, 'todo/index.html', {'tasks': tasks})
 
-def add_task(request):
-    if request.method == "POST":
-        task_name = request.POST.get("task")
-        if task_name:
-            Task.objects.create(name=task_name)
-        return redirect("/")  # redirect after POST
-    return render(request, "todo/index.html")
+    todoList = Todo.objects.all().order_by('-date')
 
-    
-def toggle_task(request, task_id):
-    if request.method == 'POST':
-        task = Task.objects.get(id=task_id)
-        task.completed = not task.completed
-        task.save()
-        return JsonResponse({'completed': task.completed})
+    return render(request, 'todo/list.html', {'list': todoList})
+
+
+def saveAction(request):
+    print(request.POST)
+    todoform = TodoForm(request.POST or None)
+
+    if todoform.is_valid():
+        todoform.save()
+
+        return redirect('/')
+    return render(request, 'todo/index.html', {'form': todoform})
+
+
+def editTodo(request, pk):
+
+    pickTodo = Todo.objects.get(pk=pk)
+
+    editForm = TodoForm(request.POST or None, instance=pickTodo)
+
+    if editForm.is_valid():
+        editForm.save()
+        return redirect('/')
+
+    return render(request, 'todo/index.html', {'form': editForm})
+
+
+def deleteAction(request, pk):
+
+    pickTodo = Todo.objects.get(pk=pk)
+    pickTodo.delete()
+
+    return redirect('/')

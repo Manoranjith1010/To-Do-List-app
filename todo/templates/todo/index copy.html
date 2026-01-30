@@ -1,9 +1,5 @@
-{% extends "todo/base.html" %}
-{% block content %}
+{% extends "todo/base.html" %}{% block content %}
 <div class="container">
-    
-  
-
   <div class="row">
     <div class="col-lg-6">
         {% for error in form.content.errors %}
@@ -24,19 +20,14 @@
               <small  class="form-text text-muted">Please Enter Your Title Here:</small>
             </div>
             
-           
+            <input type="submit" value="Submit" />
 
 
-        <input type="submit" class="btn btn-primary" value="Submit" />
+        <!--<input type="submit" class="btn btn-primary" value="Submit" />-->
       </form>
     </div>
     
   </div>
-
- 
-
-
-
 </div>
   </div>
 </div>
