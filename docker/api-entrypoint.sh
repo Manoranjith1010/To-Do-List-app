@@ -3,7 +3,7 @@ set -e
 
 # Apply any pending database migrations before the API starts.
 echo "Running prisma migrate deploy..."
-npx prisma migrate deploy
+./node_modules/.bin/prisma migrate deploy
 
 echo "Starting API..."
 exec "$@"
