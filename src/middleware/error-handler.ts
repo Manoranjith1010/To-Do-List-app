@@ -1,0 +1,62 @@
+import { NextFunction, Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
+import { AppError } from '../lib/errors';
+import { env } from '../lib/env';
+
+export function notFoundHandler(req: Request, res: Response): void {
+  res.status(404).json({
+    error: {
+      code: 'NOT_FOUND',
+      message: `Route ${req.method} ${req.originalUrl} not found`,
+    },
+  });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function errorHandler(
+  err: unknown,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+): void {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      error: { code: err.code, message: err.message, details: err.details },
+    });
+    return;
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === 'P2002') {
+      res.status(409).json({
+        error: { code: 'CONFLICT', message: 'A record with these values already exists' },
+      });
+      return;
+    }
+    if (err.code === 'P2025') {
+      res.status(404).json({
+        error: { code: 'NOT_FOUND', message: 'Resource not found' },
+      });
+      return;
+    }
+  }
+
+  if (err instanceof SyntaxError && 'body' in err) {
+    res.status(400).json({
+      error: { code: 'BAD_REQUEST', message: 'Malformed JSON in request body' },
+    });
+    return;
+  }
+
+  // eslint-disable-next-line no-console
+  console.error('Unhandled error:', err);
+  res.status(500).json({
+    error: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'An unexpected error occurred',
+      ...(env.NODE_ENV === 'development' && err instanceof Error
+        ? { details: err.message }
+        : {}),
+    },
+  });
+}

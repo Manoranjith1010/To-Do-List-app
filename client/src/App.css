@@ -1,0 +1,122 @@
+.page,
+.card {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input:not([type]) {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 0.95rem;
+}
+
+button {
+  padding: 0.55rem 0.9rem;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+button.secondary {
+  background: rgba(127, 127, 127, 0.25);
+  color: inherit;
+}
+
+button.danger {
+  background: #dc2626;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+}
+
+.muted {
+  opacity: 0.65;
+  font-size: 0.85rem;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.topbar h1 {
+  margin-bottom: 0.2rem;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(127, 127, 127, 0.2);
+  border-radius: 10px;
+  background: rgba(127, 127, 127, 0.06);
+}
+
+.todo-main {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 400;
+}
+
+.todo.done .todo-main span {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
